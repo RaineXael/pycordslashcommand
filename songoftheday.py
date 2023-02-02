@@ -14,7 +14,7 @@ class SOTDSong():
         artist_str = ""
         if len(self.author) > 0:
             artist_str = f" by **{self.author}**"
-        return f"Today's Song Of The Day is **{self.title}**{artist_str}.\n{self.link}"
+        return f"The song for {datetime.today().strftime('%Y-%m-%d')} is: **{self.title}**{artist_str}.\n{self.link}"
     
     def __repr__(self) :
         return f"{self.title}-{self.author}-{self.link}"
