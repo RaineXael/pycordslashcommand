@@ -13,7 +13,7 @@ class RandomAnimal():
         for this_animal in self.available_anmials:
             if this_animal == animal:
                 self.ephemeral = False
-                #todo: make the below actualy display the link
-                return f'Hourly Animal API by tinyfox.dev\n{requests.get(f"https://api.tinyfox.dev/img?animal={animal}").json()}'
+                pic_link = requests.get(f"https://api.tinyfox.dev/img?animal={animal}&json").json().get('loc')
+                return f'**{this_animal}**, Hourly Animal API by tinyfox.dev\nhttps://tinyfox.dev{pic_link}'
         self.ephemeral = True
         return f"The animal you entered wasn't found! Please enter one of the following as a parameter:\n{self.available_anmials}"
