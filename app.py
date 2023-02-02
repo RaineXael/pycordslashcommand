@@ -1,11 +1,14 @@
 import discord
 import dotenv
 import os
-import requests
+#import requests
+
 dotenv.load_dotenv()
-
-
 bot = discord.Bot()
+
+#import features for the bot
+from songoftheday import SongOfTheDay
+song_of_the_day = SongOfTheDay()
 
 @bot.event
 async def on_ready():
@@ -14,6 +17,7 @@ async def on_ready():
 @bot.slash_command(name = "hello", description = "Say hello to the bot")
 async def hello(ctx):
     await ctx.respond("Hey!")
+
 
 math = discord.SlashCommandGroup("math", "Math related commands")
 
@@ -35,6 +39,12 @@ async def mathdiv(ctx, numerator: int, denominator: int):
         await ctx.respond(f"The answer is {numerator/denominator}!")
     except ZeroDivisionError:
         await ctx.respond("Sorry, you can't divide by 0.")
+        
 bot.add_application_command(math)
+
+
+@bot.slash_command(name = "songoftheday", description = "Posts today's Song Of The Day")
+async def hello(ctx):
+    await ctx.respond(song_of_the_day.pick_from_songlist())
 
 bot.run(os.getenv("BOT_TOKEN"))
