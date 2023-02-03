@@ -16,9 +16,10 @@
             "name": "Discord Bot + Debug log",
             "type": "python",
             "request": "launch",
-            "program": "app.py -d",
+            "program": "app.py",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "args": ["-d"]
         }
     ]
 }
