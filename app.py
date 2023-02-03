@@ -34,6 +34,7 @@ random_animal = RandomAnimal()
 
 @bot.event
 async def on_ready():
+    print(f"{bot.user} is ready and online!")
     logger.info(f"{bot.user} is ready and online!")
 
 
@@ -48,11 +49,16 @@ async def mathadd(ctx, num1: float, operation: str, num2: float):
 
 
 @bot.slash_command(name="songoftheday", description="Posts today's Song Of The Day")
-async def hello(ctx):
+async def songoftheday(ctx):
     try:
         await ctx.respond(song_of_the_day.pick_from_songlist())
     except Exception as e:
         logger.error("Song Of The Day picking error: " + str(e))
+        
+@bot.slash_command(name="getuser", description="Does something with the user", pass_context = True)
+async def get_user(ctx):
+    await ctx.respond(f"Hello, {ctx.message.author.display_name}")
+    
 
 
 @bot.slash_command(name="randomanimal", description="Posts a random specified animal")
