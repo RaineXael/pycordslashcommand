@@ -42,8 +42,7 @@ class SongOfTheDay():
         for song_str in f.readlines():
             split_str = song_str.split("|")
             song_obj = SOTDSong(split_str[0], split_str[1], split_str[2])
-            self.song_list.append(song_obj) 
-        print(self.song_list) 
+            self.song_list.append(song_obj)  
                      
             
         
