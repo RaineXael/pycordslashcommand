@@ -2,6 +2,7 @@
 from randomanimal import RandomAnimal
 from mathops import do_math
 from songoftheday import SongOfTheDay
+from db import SQL_Manager
 import discord
 import dotenv
 import os
@@ -15,6 +16,7 @@ except:
 
 dotenv.load_dotenv()
 bot = discord.Bot()
+
 
 #init logger
 logger = logging.getLogger('discord')
@@ -35,8 +37,6 @@ random_animal = RandomAnimal()
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
-    logger.info(f"{bot.user} is ready and online!")
-
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):
@@ -57,7 +57,9 @@ async def songoftheday(ctx):
         
 @bot.slash_command(name="getuser", description="Does something with the user", pass_context = True)
 async def get_user(ctx):
-    await ctx.respond(f"Hello, {ctx.message.author.display_name}")
+    uid = ctx.author.id
+    #await ctx.respond(f"Hello, {ctx.author.id}")
+
     
 
 
