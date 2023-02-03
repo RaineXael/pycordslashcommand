@@ -5,10 +5,27 @@ from songoftheday import SongOfTheDay
 import discord
 import dotenv
 import os
-# import requests
+import logging
+import sys
+
+try:
+    is_debug = sys.argv[1] == "-d"
+except:
+    is_debug = False
 
 dotenv.load_dotenv()
 bot = discord.Bot()
+
+#init logger
+logger = logging.getLogger('discord')
+if is_debug:
+    logger.setLevel(logging.DEBUG)
+else:
+    logger.setLevel(logging.WARN)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
+print("Logger done")
 
 # import features for the bot
 song_of_the_day = SongOfTheDay()
@@ -18,6 +35,7 @@ random_animal = RandomAnimal()
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
+    logger.info(f"{bot.user} is ready and online!")
 
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
