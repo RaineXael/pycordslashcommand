@@ -25,7 +25,6 @@ async def hello(ctx):
     await ctx.respond("Hey!", ephemeral=True)
 
 
-
 @bot.slash_command(name="math", description="Do various math operations on two numbers, including decimals")
 async def mathadd(ctx, num1: float, operation: str, num2: float):
     await ctx.respond(do_math(num1, operation, num2))
