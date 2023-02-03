@@ -1,6 +1,6 @@
 import random
 from datetime import datetime
-
+import logging
 
 class SOTDSong():
     def __init__(self, title, author, link):
@@ -23,14 +23,10 @@ class SongOfTheDay():
 
     def pick_from_songlist(self):
         # picks a random song seeded from the current day
-        try:
-            today = datetime.today().strftime('%Y%m%d')
-            random.seed(today)
-            random_song_index = random.randint(0, len(self.song_list))
-            return self.song_list[random_song_index]
-        except Exception as e:
-            print(e)
-            return f"Sorry, I was unable to get today's song. ({e})"
+        today = datetime.today().strftime('%Y%m%d')
+        random.seed(today)
+        random_song_index = random.randint(0, len(self.song_list))
+        return self.song_list[random_song_index]
 
     def __init__(self):
         # import songlist and keep it in memory

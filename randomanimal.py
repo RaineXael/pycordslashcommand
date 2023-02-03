@@ -8,7 +8,7 @@ class RandomAnimal():
         r = requests.get('https://api.tinyfox.dev/img?animal=animal&json')
         self.available_anmials = r.json().get('available')
         self.ephemeral = False  # states wether response is ephmeral or not
-        print("Random Animal Class Ready")
+        
 
     def get_random_animal(self, animal):
         if animal is not None:
