@@ -6,27 +6,19 @@ import aiohttp
 class Fortnite():
     async def get_character(self, skin_name):
         #returns a discord embed with the specified characted, if found.
-        #check if found first
-        #async with aiohttp.ClientSession() as session:
-        #    async with session.get(f"https://fortnite-api.com/v2/cosmetics/br/search?name={skin_name}") as r:
-        #        if r.status == 200:
-        #            #do stuff
-        #            print(r.text)
-        #            embed = discord.Embed(title="embed Skin Found!", description="description", color=discord.Color.dark_grey())
-        #        else:
-        #            embed = discord.Embed(title="embed Skin Not Found!", description="description", color=discord.Color.dark_grey())
-        #            return embed
         async with aiohttp.ClientSession() as session:
             print(f'https://fortnite-api.com/v2/cosmetics/br/search?name={skin_name}')
             async with session.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={skin_name}') as r:
                 if r.status == 200:
-                    js = await r.json()
-                    print(js)
-                    return discord.Embed(title=f"{skin_name} found", description="description", color=discord.Color.fuchsia())
+                    js = await r.json()                    
+                    return 
                 else:
                     print("no lol")
-                    return discord.Embed(title="embed Skin Not Found!", description="description", color=discord.Color.dark_grey())
+                    return discord.Embed(title="Skin Not Found!", description="Please enter a valid skin name.", color=discord.Color.dark_grey())
                 
-            
-                
-        
+    def __skin_to_embed__(json)        
+        #temp
+        return discord.Embed(title=f"", description="", color=discord.Color.fuchsia())
+    
+    def __rarity_to_color__()
+        #tfs the rarity of a char to a discord color
