@@ -1,8 +1,9 @@
 import aiosqlite
 
 class SQL_Manager():
-    async def __init__(self, db_file):
-        self.db = await aiosqlite.connect(db_file)
+    def __init__(self, db_file):
+        self.db = aiosqlite.connect(db_file)
+        print (self.db)
     
     async def select_one(self, name, values, where_statement=""):
         #returns a list of the selected elements
@@ -14,7 +15,7 @@ class SQL_Manager():
         cursor.close()
         return result
     
-    async def select_all(self, name, values, where_statement):
+    async def select_all(self, name, values, where_statement=""):
         #returns a list of the selected elements
         where_string = ""
         if where_statement != "":
