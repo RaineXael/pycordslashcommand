@@ -3,6 +3,7 @@ from randomanimal import RandomAnimal
 from mathops import do_math
 from songoftheday import SongOfTheDay
 from db import SQL_Manager
+from fortniteapi import Fortnite
 import discord
 import dotenv
 import os
@@ -33,6 +34,7 @@ logger.addHandler(handler)
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 sql_man = SQL_Manager('./databases/example.db')
+fortnite = Fortnite()
 
 @bot.event
 async def on_ready():
@@ -77,5 +79,23 @@ async def get_user(ctx):
 async def randomanimal(ctx, animal=None):
     message = random_animal.get_random_animal(animal)
     await ctx.respond(message, ephemeral=random_animal.ephemeral)
+    
+fn = discord.SlashCommandGroup("fortnite", "Fortnite related commands")
+
+@fn.command(name = "map", description =  "Displays an image of the current map")
+async def fn_map(ctx):
+    embed = await fortnite.get_map()
+    await ctx.respond(embed=embed) 
+    
+@fn.command(name = "cosmetic", description =  "Search info for a cosmetic by name")
+async def fn_cosmetic(ctx, name: str):
+    embed = await fortnite.get_character(name)
+    await ctx.respond(embed = embed) 
+    
+@fn.command(name = "link", description =  "link your Epic account to your Discord account to make stats commands work")
+async def fn_cosmetic(ctx):
+    await ctx.respond("Whoops! Under construction!", ephemeral=True) 
+
+bot.add_application_command(fn)
 
 bot.run(os.getenv("BOT_TOKEN"))
