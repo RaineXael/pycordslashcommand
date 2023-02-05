@@ -84,7 +84,7 @@ async def fn_cosmetic(ctx, name: str):
 
 @fn.command(name="stats", description="Get your fortnite stats")
 async def fn_cosmetic(ctx, user_name: str):
-    embed = await fortnite.generate_user_stats_embed(user_name)
+    embed = await fortnite.get_user_data(user_name)
     await ctx.respond(embed=embed)
 
 bot.add_application_command(fn)

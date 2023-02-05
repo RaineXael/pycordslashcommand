@@ -96,16 +96,22 @@ class Fortnite():
                 else:
                     return discord.Embed(title="Map could not be found!", description="Please try later.", color=discord.Color.dark_grey())
     
+    async def generate_user_embed(self,js):
+        battlepass_stats = f"Level {js.get('battlePass').get('level')}, {js.get('battlePass').get('progress')}% to the next level"
+        print("image: " + str(js.get('image')))
+        embed = discord.Embed(title=js.get('account').get('name'), description=battlepass_stats, color=0xd06f33)    
+        embed.set_image(url=js.get('image'))
+        return embed
     
-    async def generate_user_stats_embed(self, user_name):
+    async def get_user_data(self, user_name):
         async with aiohttp.ClientSession() as session:
             print(self.api_token)
-            async with session.get(f'https://fortnite-api.com/v2/stats/br/v2?name={user_name}', headers=self.api_token) as r:
+            async with session.get(f'https://fortnite-api.com/v2/stats/br/v2?name={user_name}&image=all', headers=self.api_token) as r:
                     
                     if r.status == 200:
                         js = await r.json()
-                        print(js)
-                        return discord.Embed(title="Epic ID found!", color=discord.Color.green())            
+                        print(js.get('data').get('image'))
+                        return await self.generate_user_embed(js.get('data'))
                     elif r.status == 400:
                         return discord.Embed(title=f"User \'{user_name}\' not found!", description="Please try again.", color=discord.Color.dark_grey())
                     elif r.status == 403:
