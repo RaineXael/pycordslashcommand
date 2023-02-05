@@ -1,15 +1,12 @@
 
 import discord
 import aiohttp
-from db import SQL_Manager
 ##-FORTNITE API USED: https://fortnite-api.com/-##
 
 class Fortnite():
     
-    #def __init__(self):
-        #self.sql_man = SQL_Manager('./databases/fortnite.db')
-        #print(self.sql_man.select('user'))
-        #somehow find a way to launch the above while having this as a static class
+    def __init__(self, logger):
+        self.logger = logger
     
     def __rarity_to_color__(self, color_str="common"):
         #tfs the rarity of a char to a discord color
@@ -97,4 +94,19 @@ class Fortnite():
                     return embed              
                 else:
                     return discord.Embed(title="Map could not be found!", description="Please try later.", color=discord.Color.dark_grey())
-        
+    
+    async def link_accounts(self,discord_id,epic_id, sql_man):
+        #check if current id exists already
+        resultset = await sql_man.select('user', '*',f'discord_id IS \'{discord_id}\'')
+        #print(len(resultset))
+        if len(resultset) == 0:
+            if len(epic_id) == 32:
+                try:
+                    await sql_man.insert('user', f'\'{discord_id}\',\'{epic_id}\'')
+                    return 'Accounts linked successfully!'
+                except Exception as e:
+                    self.logger.error(f"Account link error: {discord_id},{epic_id} - {e}")
+                    return 'Something went wrong when linking your account.'
+            return "Invalid Epic Games ID." 
+        return "Account already linked."
+           

@@ -13,9 +13,10 @@ class SQL_Manager():
         print(f'SELECT {values} FROM {name} {where_string};')
         cursor = await db.execute(f'SELECT {values} FROM {name} {where_string};')
         result = await cursor.fetchall()
+        print(type(result))
         await cursor.close()
         await db.close()
-        return str(result)
+        return result
         
     async def insert(self, table_name, value_inputs):
         #returns true or false wether success or fail

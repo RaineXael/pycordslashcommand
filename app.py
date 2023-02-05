@@ -3,6 +3,7 @@ from randomanimal import RandomAnimal
 from mathops import do_math
 from songoftheday import SongOfTheDay
 from fortniteapi import Fortnite
+from db import SQL_Manager
 import discord
 import dotenv
 import os
@@ -32,7 +33,8 @@ logger.addHandler(handler)
 # import features for the bot
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
-fortnite = Fortnite()
+fortnite = Fortnite(logger) 
+fortnite_sql_man = SQL_Manager('./databases/fortnite.db')
 
 @bot.event
 async def on_ready():
@@ -81,8 +83,10 @@ async def fn_cosmetic(ctx, name: str):
     await ctx.respond(embed = embed) 
     
 @fn.command(name = "link", description =  "link your Epic account to your Discord account to make stats commands work")
-async def fn_cosmetic(ctx):
-    await ctx.respond("Whoops! Under construction!", ephemeral=True) 
+async def fn_cosmetic(ctx, epic_games_id: str):
+    result = await fortnite.link_accounts(ctx.author.id,epic_games_id, fortnite_sql_man)
+    await ctx.respond(result, ephemeral=True) 
+    #await ctx.respond("Whoops! Under construction!", ephemeral=True) 
 
 bot.add_application_command(fn)
 
