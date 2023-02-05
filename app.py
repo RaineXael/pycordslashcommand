@@ -70,8 +70,8 @@ async def fn_map(ctx):
     await ctx.respond(embed=embed) 
     
 @fn.command(name = "cosmetic", description =  "Search info for a cosmetic by name")
-async def fn_cosmetic(ctx, skin: str):
-    embed = await fortnite.get_character(skin)
+async def fn_cosmetic(ctx, name: str):
+    embed = await fortnite.get_character(name)
     await ctx.respond(embed = embed) 
 
 bot.add_application_command(fn)

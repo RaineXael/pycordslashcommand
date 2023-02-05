@@ -38,13 +38,36 @@ class Fortnite():
             #common
             color=0x8e989c
         return color
+            
+    def date_simplifier(self,string):
+        #makes the date format given by the json into a more friendly looking string
+        print(string)
+        month = ['January','Febuary','March','April','May','June','July','August','September','October','November','December']
+        splitstr = string.split('T')[0].split('-')
+        return f'{month[int(splitstr[1])-1]} {splitstr[2]} {splitstr[0]}'
+                
+    def __get_cosmetic_set__(self,json):
+        try:
+            return json.get('set').get('text')
+        except:
+            return "Not a part of a set."
+        
+    def __get_cosmetic_last_seen__(self,json):
+        try:
+            dates = json.get('shopHistory')
+            return self.date_simplifier(dates[len(dates)-1])
+        except:
+            return "Not a shop item."
                 
     def __skin_to_embed__(self,json):      
         embed_color = self.__rarity_to_color__(json.get('rarity').get('value'))
         embed = discord.Embed(title=f"{json.get('name')}", description=f"{json.get('description')}", color=embed_color)
-        thumbnail_url = json.get('images').get('smallIcon')
-        embed.add_field(name="Info", value=f"{json.get('introduction').get('text')}\n{json.get('set').get('text')}")
-        embed.set_thumbnail(url=thumbnail_url)
+        thumbnail_url = json.get('images').get('icon')
+        embed.add_field(name="Info", value=f"{json.get('introduction').get('text')}\n{self.__get_cosmetic_set__(json)}", inline=False)
+        embed.set_image(url=thumbnail_url)
+        embed.set_footer(text="Data provided by: fortnite-api.com")
+        embed.add_field(name="Date Added", value=self.date_simplifier(json.get('added')),inline=True)    
+        embed.add_field(name="Last Seen", value=self.__get_cosmetic_last_seen__(json), inline=True)
         return embed
             
     async def get_character(self, skin_name):
@@ -56,8 +79,6 @@ class Fortnite():
                     return self.__skin_to_embed__(js.get('data'))
                 else:
                     return discord.Embed(title="Skin Not Found!", description="Please enter a valid skin name.", color=discord.Color.dark_grey())
-    
-    
     
               
     async def get_map(self):
