@@ -32,7 +32,7 @@ logger.addHandler(handler)
 # import features for the bot
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
-sql_man = SQL_Manager('./example.db')
+sql_man = SQL_Manager('./databases/example.db')
 
 @bot.event
 async def on_ready():
