@@ -65,7 +65,11 @@ async def randomanimal(ctx, animal=None):
 fn = discord.SlashCommandGroup("fortnite", "Fortnite related commands")
 
 @fn.command(name = "map", description =  "Displays an image of the current map")
-async def mathadd(ctx, skin: str):
+async def fn_map(ctx):
+    await ctx.respond("Under construction!") 
+    
+@fn.command(name = "map", description =  "Displays an image of the current map")
+async def fn_cosmetic(ctx, skin: str):
     embed = await fortnite.get_character(skin)
     await ctx.respond(embed = embed) 
 
