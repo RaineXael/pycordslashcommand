@@ -2,7 +2,6 @@
 from randomanimal import RandomAnimal
 from mathops import do_math
 from songoftheday import SongOfTheDay
-from db import SQL_Manager
 from fortniteapi import Fortnite
 import discord
 import dotenv
@@ -33,7 +32,6 @@ logger.addHandler(handler)
 # import features for the bot
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
-sql_man = SQL_Manager('./databases/example.db')
 fortnite = Fortnite()
 
 @bot.event

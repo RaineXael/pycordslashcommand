@@ -1,10 +1,15 @@
 
 import discord
 import aiohttp
+from db import SQL_Manager
 ##-FORTNITE API USED: https://fortnite-api.com/-##
 
 class Fortnite():
     
+    #def __init__(self):
+        #self.sql_man = SQL_Manager('./databases/fortnite.db')
+        #print(self.sql_man.select('user'))
+        #somehow find a way to launch the above while having this as a static class
     
     def __rarity_to_color__(self, color_str="common"):
         #tfs the rarity of a char to a discord color
