@@ -46,17 +46,29 @@ class Fortnite():
         embed.add_field(name="Info", value=f"{json.get('introduction').get('text')}\n{json.get('set').get('text')}")
         embed.set_thumbnail(url=thumbnail_url)
         return embed
-        
-        
+            
     async def get_character(self, skin_name):
         #returns a discord embed with the specified characted, if found.
         async with aiohttp.ClientSession() as session:
-            print(f'https://fortnite-api.com/v2/cosmetics/br/search?name={skin_name}')
             async with session.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={skin_name}') as r:
                 if r.status == 200:
                     js = await r.json()                    
                     return self.__skin_to_embed__(js.get('data'))
                 else:
-                    print("no lol")
                     return discord.Embed(title="Skin Not Found!", description="Please enter a valid skin name.", color=discord.Color.dark_grey())
+    
+    
+    
+              
+    async def get_map(self):
+        #returns a discord embed with the specified characted, if found.
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'https://fortnite-api.com/v1/map') as r:
+                if r.status == 200:
+                    js = await r.json()   
+                    embed = discord.Embed(title="The Fortnite Map", color=discord.Color.green()) #todo put the current season and week in there
+                    embed.set_image(url=js.get('data').get('images').get('pois'))
+                    return embed              
+                else:
+                    return discord.Embed(title="Map could not be found!", description="Please try later.", color=discord.Color.dark_grey())
         

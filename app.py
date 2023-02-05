@@ -66,9 +66,10 @@ fn = discord.SlashCommandGroup("fortnite", "Fortnite related commands")
 
 @fn.command(name = "map", description =  "Displays an image of the current map")
 async def fn_map(ctx):
-    await ctx.respond("Under construction!") 
+    embed = await fortnite.get_map()
+    await ctx.respond(embed=embed) 
     
-@fn.command(name = "map", description =  "Displays an image of the current map")
+@fn.command(name = "cosmetic", description =  "Search info for a cosmetic by name")
 async def fn_cosmetic(ctx, skin: str):
     embed = await fortnite.get_character(skin)
     await ctx.respond(embed = embed) 
