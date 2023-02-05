@@ -2,32 +2,32 @@ import aiosqlite
 
 class SQL_Manager():
     def __init__(self, db_file):
-        self.db = aiosqlite.connect(db_file)
-        print (self.db)
-    
-    async def select_one(self, name, values, where_statement=""):
+        self.db_file = db_file
+        
+    async def select(self, name, values='*', where_statement=""):
         #returns a list of the selected elements
+        db = await aiosqlite.connect(self.db_file)
         where_string = ""
         if where_statement != "":
             where_string = f"WHERE {where_statement}"
-        cursor = await self.db.execute(f'SELECT {values} FROM {name} {where_string};')
-        result = await cursor.fetchone()
-        cursor.close()
-        return result
-    
-    async def select_all(self, name, values, where_statement=""):
-        #returns a list of the selected elements
-        where_string = ""
-        if where_statement != "":
-            where_string = f"WHERE {where_statement}"
-        cursor = await self.db.execute(f'SELECT {values} FROM {name} {where_string};')
+        print(f'SELECT {values} FROM {name} {where_string};')
+        cursor = await db.execute(f'SELECT {values} FROM {name} {where_string};')
         result = await cursor.fetchall()
-        cursor.close()
-        return result
+        await cursor.close()
+        await db.close()
+        return str(result)
         
     async def insert(self, table_name, value_inputs):
-        #inserts values into the db
-        print("skeleton method as of now")
+        #returns true or false wether success or fail
+        try:
+            db = await aiosqlite.connect(self.db_file)
+            print("input: " + f"INSERT INTO {table_name} VALUES({value_inputs})")
+            await db.execute(f"INSERT INTO {table_name} VALUES({value_inputs})")
+            await db.commit()
+            await db.close()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+            
     
-    async def close_database(self):
-        await self.db.close()

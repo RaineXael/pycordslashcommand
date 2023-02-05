@@ -32,7 +32,7 @@ logger.addHandler(handler)
 # import features for the bot
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
-
+sql_man = SQL_Manager('./example.db')
 
 @bot.event
 async def on_ready():
@@ -41,6 +41,16 @@ async def on_ready():
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):
     await ctx.respond("Hey!", ephemeral=True)
+    
+@bot.slash_command(name="dbtest", description="test some random ass stuff for db")
+async def dbdothing(ctx):
+    result = await sql_man.select('table1', '*')
+    await ctx.respond(result)
+    
+@bot.slash_command(name="dbtestinsert", description="test some random ass stuff for db")
+async def dbdothing(ctx, id:str, name:str):
+    result = await sql_man.insert('table1', f'\'{id}\',\'{name}\'')
+    await ctx.respond(f"{result} (check the logs dipshit)")
 
 
 @bot.slash_command(name="math", description="Do various math operations on two numbers, including decimals")
