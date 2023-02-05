@@ -2,6 +2,7 @@
 from randomanimal import RandomAnimal
 from mathops import do_math
 from songoftheday import SongOfTheDay
+from db import SQL_Manager
 from fortniteapi import Fortnite
 import discord
 import dotenv
@@ -17,6 +18,7 @@ except:
 dotenv.load_dotenv()
 bot = discord.Bot()
 
+
 #init logger
 logger = logging.getLogger('discord')
 if is_debug:
@@ -31,17 +33,26 @@ logger.addHandler(handler)
 # import features for the bot
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
+sql_man = SQL_Manager('./databases/example.db')
 fortnite = Fortnite()
-
 
 @bot.event
 async def on_ready():
-    logger.info(f"{bot.user} is ready and online!")
-
+    print(f"{bot.user} is ready and online!")
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):
     await ctx.respond("Hey!", ephemeral=True)
+    
+@bot.slash_command(name="dbtest", description="test some random ass stuff for db")
+async def dbdothing(ctx):
+    result = await sql_man.select('table1', '*')
+    await ctx.respond(result)
+    
+@bot.slash_command(name="dbtestinsert", description="test some random ass stuff for db")
+async def dbdothing(ctx, id:str, name:str):
+    result = await sql_man.insert('table1', f'\'{id}\',\'{name}\'')
+    await ctx.respond(f"{result} (check the logs dipshit)")
 
 
 @bot.slash_command(name="math", description="Do various math operations on two numbers, including decimals")
@@ -50,11 +61,18 @@ async def mathadd(ctx, num1: float, operation: str, num2: float):
 
 
 @bot.slash_command(name="songoftheday", description="Posts today's Song Of The Day")
-async def hello(ctx):
+async def songoftheday(ctx):
     try:
         await ctx.respond(song_of_the_day.pick_from_songlist())
     except Exception as e:
         logger.error("Song Of The Day picking error: " + str(e))
+        
+@bot.slash_command(name="getuser", description="Does something with the user", pass_context = True)
+async def get_user(ctx):
+    uid = ctx.author.id
+    #await ctx.respond(f"Hello, {ctx.author.id}")
+
+    
 
 
 @bot.slash_command(name="randomanimal", description="Posts a random specified animal")
