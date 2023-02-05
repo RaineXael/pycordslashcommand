@@ -5,8 +5,9 @@ import aiohttp
 
 class Fortnite():
     
-    def __init__(self, logger):
+    def __init__(self, api_token, logger):
         self.logger = logger
+        self.api_token={'Authorization': api_token}
     
     def __rarity_to_color__(self, color_str="common"):
         #tfs the rarity of a char to a discord color
@@ -95,18 +96,25 @@ class Fortnite():
                 else:
                     return discord.Embed(title="Map could not be found!", description="Please try later.", color=discord.Color.dark_grey())
     
-    async def link_accounts(self,discord_id,epic_id, sql_man):
-        #check if current id exists already
-        resultset = await sql_man.select('user', '*',f'discord_id IS \'{discord_id}\'')
-        #print(len(resultset))
-        if len(resultset) == 0:
-            if len(epic_id) == 32:
-                try:
-                    await sql_man.insert('user', f'\'{discord_id}\',\'{epic_id}\'')
-                    return 'Accounts linked successfully!'
-                except Exception as e:
-                    self.logger.error(f"Account link error: {discord_id},{epic_id} - {e}")
-                    return 'Something went wrong when linking your account.'
-            return "Invalid Epic Games ID." 
-        return "Account already linked."
-           
+    
+    async def generate_user_stats_embed(self, user_name):
+        async with aiohttp.ClientSession() as session:
+            print(self.api_token)
+            async with session.get(f'https://fortnite-api.com/v2/stats/br/v2?name={user_name}', headers=self.api_token) as r:
+                    
+                    if r.status == 200:
+                        js = await r.json()
+                        print(js)
+                        return discord.Embed(title="Epic ID found!", color=discord.Color.green())            
+                    elif r.status == 400:
+                        return discord.Embed(title=f"User \'{user_name}\' not found!", description="Please try again.", color=discord.Color.dark_grey())
+                    elif r.status == 403:
+                        discord.Embed(title=f"User \'{user_name}\''s stats are private.", color=discord.Color.dark_grey())
+                    else:
+                        return discord.Embed(title="Data could not be found!", description="Please try later.", color=discord.Color.dark_grey())
+        
+    
+    
+        
+    
+    
