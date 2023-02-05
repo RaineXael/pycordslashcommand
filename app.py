@@ -73,6 +73,10 @@ async def fn_map(ctx):
 async def fn_cosmetic(ctx, name: str):
     embed = await fortnite.get_character(name)
     await ctx.respond(embed = embed) 
+    
+@fn.command(name = "link", description =  "link your Epic account to your Discord account to make stats commands work")
+async def fn_cosmetic(ctx):
+    await ctx.respond("Whoops! Under construction!", ephemeral=True) 
 
 bot.add_application_command(fn)
 
