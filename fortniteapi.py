@@ -5,6 +5,9 @@ import aiohttp
 
 class Fortnite():
     
+    def __init__(self, api_token, logger):
+        self.logger = logger
+        self.api_token={'Authorization': api_token}
     
     def __rarity_to_color__(self, color_str="common"):
         #tfs the rarity of a char to a discord color
@@ -92,4 +95,32 @@ class Fortnite():
                     return embed              
                 else:
                     return discord.Embed(title="Map could not be found!", description="Please try later.", color=discord.Color.dark_grey())
+    
+    async def generate_user_embed(self,js):
+        battlepass_stats = f"Level {js.get('battlePass').get('level')}, {js.get('battlePass').get('progress')}% to the next level"
+        print("image: " + str(js.get('image')))
+        embed = discord.Embed(title=js.get('account').get('name'), description=battlepass_stats, color=0xd06f33)    
+        embed.set_image(url=js.get('image'))
+        return embed
+    
+    async def get_user_data(self, user_name):
+        async with aiohttp.ClientSession() as session:
+            print(self.api_token)
+            async with session.get(f'https://fortnite-api.com/v2/stats/br/v2?name={user_name}&image=all', headers=self.api_token) as r:
+                    
+                    if r.status == 200:
+                        js = await r.json()
+                        print(js.get('data').get('image'))
+                        return await self.generate_user_embed(js.get('data'))
+                    elif r.status == 400:
+                        return discord.Embed(title=f"User \'{user_name}\' not found!", description="Please try again.", color=discord.Color.dark_grey())
+                    elif r.status == 403:
+                        discord.Embed(title=f"User \'{user_name}\''s stats are private.", color=discord.Color.dark_grey())
+                    else:
+                        return discord.Embed(title="Data could not be found!", description="Please try later.", color=discord.Color.dark_grey())
         
+    
+    
+        
+    
+    
