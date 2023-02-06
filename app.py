@@ -5,7 +5,6 @@ from songoftheday import SongOfTheDay
 from fortniteapi import Fortnite
 from db import SQL_Manager
 from reminder import Reminder
-from remindercheck import ReminderCheck
 import discord
 import dotenv
 import os
@@ -39,7 +38,7 @@ song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
 reminder = Reminder('./databases/reminder.db')
-rcheck = ReminderCheck()
+
 
 @bot.event
 async def on_ready():
@@ -91,15 +90,18 @@ async def fn_cosmetic(ctx, user_name: str):
 
 bot.add_application_command(fn)
 
-@bot.slash_command(name="remind", description="Set a reminder for yourself")
-async def randomanimal(ctx, message:str, year:str, month:str,day:str,hour:str,minute:str):
-    #await reminder.on_add_reminder(ctx.author.id, message)
-    val = reminder.validate_time(year,month,day,'','')
-    await ctx.respond(val)
+rem = discord.SlashCommandGroup("reminder", "Reminder related commands")
 
-@bot.slash_command(name="redmind", description="Set a reminder for yourself")
+@rem.command(name="add", description="Set a reminder for yourself")
+async def randomanimal(ctx, message:str, year:str, month:str,day:str,hour:str,minute:str):
+    val = await reminder.on_add_reminder(ctx.author.id, message,year,month,day,hour,minute)
+    await ctx.respond(val,ephemeral=True)
+
+@rem.command(name="check", description="Check all your active reminders")
 async def randomanimal(ctx):
-    message = await reminder.decrypt_message(ctx.author.id)
-    await ctx.respond(message)
+    #message = await reminder.decrypt_message(ctx.author.id)
+    await ctx.respond('Under construction!')
+    
+bot.add_application_command(rem)
 
 bot.run(os.getenv("BOT_TOKEN"))

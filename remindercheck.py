@@ -9,7 +9,7 @@ class ReminderCheck(commands.Cog):
     def cog_unload(self):
         self.printer.cancel()
 
-    @tasks.loop(minutes=1.0)
+    @tasks.loop(seconds=30.0)
     async def printer(self):
         print(self.index)
         self.index += 1
