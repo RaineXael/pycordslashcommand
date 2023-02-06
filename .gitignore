@@ -1,6 +1,7 @@
 #token template and log file
 bot_token.py
 discord.log
+reminder_key
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
