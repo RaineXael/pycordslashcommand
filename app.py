@@ -4,6 +4,7 @@ from mathops import do_math
 from songoftheday import SongOfTheDay
 from fortniteapi import Fortnite
 from db import SQL_Manager
+from reminder import Reminder
 import discord
 import dotenv
 import os
@@ -36,7 +37,7 @@ logger.addHandler(handler)
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
-fortnite_sql_man = SQL_Manager('./databases/fortnite.db')
+reminder = Reminder('./databases/reminder.db')
 
 
 @bot.event
@@ -88,5 +89,10 @@ async def fn_cosmetic(ctx, user_name: str):
     await ctx.respond(embed=embed)
 
 bot.add_application_command(fn)
+
+@bot.slash_command(name="remind", description="Set a reminder for yourself")
+async def randomanimal(ctx, message:str):
+    await reminder.on_add_reminder(ctx.author.id, message)
+    await ctx.respond('check the db dumbass')
 
 bot.run(os.getenv("BOT_TOKEN"))
