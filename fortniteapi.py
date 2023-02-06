@@ -92,6 +92,7 @@ class Fortnite():
                     js = await r.json()   
                     embed = discord.Embed(title="The Fortnite Map", color=discord.Color.green()) #todo put the current season and week in there
                     embed.set_image(url=js.get('data').get('images').get('pois'))
+                    embed.set_footer(text="Data provided by: fortnite-api.com")
                     return embed              
                 else:
                     return discord.Embed(title="Map could not be found!", description="Please try later.", color=discord.Color.dark_grey())
@@ -100,6 +101,7 @@ class Fortnite():
         battlepass_stats = f"Level {js.get('battlePass').get('level')}, {js.get('battlePass').get('progress')}% to the next level"
         print("image: " + str(js.get('image')))
         embed = discord.Embed(title=js.get('account').get('name'), description=battlepass_stats, color=0xd06f33)    
+        embed.set_footer(text="Data provided by: fortnite-api.com")
         embed.set_image(url=js.get('image'))
         return embed
     
