@@ -29,6 +29,15 @@ class Reminder():
         #fired when the reminder command is fired off
         #check inputs then do the below
         await self.insert_reminder('reminders',uid,message)
+        
+    async def decrypt_message(self,uid):
+        db = await aiosqlite.connect(self.db_file)
+                    
+        message = await db.select('reminders','message')
+        self.fernet.decrypt(bytes(message,'UTF-8'))
+        await db.commit()
+        await db.close()
+        return message
     
     
     

@@ -95,4 +95,9 @@ async def randomanimal(ctx, message:str):
     await reminder.on_add_reminder(ctx.author.id, message)
     await ctx.respond('check the db dumbass')
 
+@bot.slash_command(name="redmind", description="Set a reminder for yourself")
+async def randomanimal(ctx, message:str):
+    message = await reminder.decrypt_message(ctx.author.id)
+    await ctx.respond(message)
+
 bot.run(os.getenv("BOT_TOKEN"))
