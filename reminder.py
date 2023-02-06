@@ -45,5 +45,25 @@ class Reminder():
         await db.close()
         return truestr
     
+    def validate_time(self,year,month,day,hour,minute):
+
+        # input date
+        date_string = f'{year}-{month}-{day}-{hour}-{minute}'
+        # giving the date format
+        date_format = '%Y-%m-%d-%H-%M'
+        current_year = str(datetime.today())
+        print(current_year)
+        try:
+            # formatting the date using strptime() function
+            dateObject = datetime.strptime(date_string, date_format)
+            if dateObject <= datetime.today():
+                return 'The time you entered was in the past. Please enter a future time and date.'
+            return dateObject
+        
+        # If the date validation goes wrong
+        except ValueError:
+            # printing the appropriate text if ValueError occurs
+            return "Incorrect data format, should be YYYY-MM-DD"
+    
     
     
