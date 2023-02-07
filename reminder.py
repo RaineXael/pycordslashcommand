@@ -1,23 +1,69 @@
 from cryptography.fernet import Fernet
 import aiosqlite
 from datetime import datetime
-from remindercheck import ReminderCheck
+from discord.ext import tasks, commands
 # the messages here are encrypted so i don't see people's private messages
 # when doing things in the database
 
 
-class Reminder():
+class Reminder(commands.Cog):
 
-    def __init__(self, db_file,bot):
+    def __init__(self, db_file, bot):
         try:
             with open("./reminder_key", "rb") as binary_file:
                 self.key = binary_file.read()
             self.fernet = Fernet(self.key)
             self.db_file = db_file
-            self.rcheck = ReminderCheck(db_file, bot)
+            self.bot = bot
+            self.printer.start()
         except:
             print(
                 'There\'s a problem initializing the fernet key. Was reminder_key created?')
+
+    def cog_unload(self):
+        self.printer.cancel()
+
+    async def on_check_messages(self):
+        try:
+            db = await aiosqlite.connect(self.db_file)
+            cursor = await db.execute(f'SELECT * FROM \'reminders\' WHERE datetime(time) < datetime(\'{str(datetime.now())}\');')
+            result = await cursor.fetchall()
+            await cursor.close()
+            await db.commit()
+            await db.close()
+
+            # if > 1 entry in result return the result to be processed in remindercheck
+            if len(result) > 0:
+                return result
+            return None
+        except Exception as e:
+            print(f"exception in db checking due messages: {e}")
+            return None
+
+    async def release_messages(self, result: list):
+        # send dms to the poeple
+        db = await aiosqlite.connect(self.db_file)
+        try:
+            for reminder in result:
+                
+                    message = self.fernet.decrypt(str(reminder[1], 'UTF-8'))
+                    user = await self.bot.fetch_user(int(reminder[0]))
+                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}: \'{str(message)}\'")
+                    # also erase entry from db
+                    
+                    await db.execute(f"DELETE FROM reminders WHERE uid = ? AND message = ? and time = ?", (reminder[0], reminder[1], reminder[2]))
+                    await db.commit()                    
+        except Exception as e:
+            print(f"Exception occoured during removal of fulfilled request: {e}")
+        finally:
+            await db.close()        
+            
+
+    @tasks.loop(seconds=30.0)
+    async def printer(self):
+        message_check = await self.on_check_messages()
+        if message_check != None:
+            await self.release_messages(message_check)
 
     async def insert_reminder(self, table_name, uid, message, time_obj):
         # returns true or false wether success or fail
