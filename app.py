@@ -99,9 +99,9 @@ async def randomanimal(ctx, message:str, year:str, month:str,day:str,hour:str,mi
 
 @rem.command(name="check", description="Check all your active reminders")
 async def randomanimal(ctx):
-    message = await reminder.on_check_messages(ctx.author.id)
+    message = await reminder.get_all_reminders(ctx.author.id)
     #await ctx.respond('Under construction!')
-    await ctx.respond(message)
+    await ctx.respond(message, ephemeral=True)
     
 bot.add_application_command(rem)
 

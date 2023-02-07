@@ -15,6 +15,26 @@ class Reminder(commands.Cog):
     def cog_unload(self):
         self.printer.cancel()
 
+    async def get_all_reminders(self, uid):
+        try:
+            db = await aiosqlite.connect(self.db_file)
+            cursor = await db.execute(f'SELECT * FROM \'reminders\' WHERE uid IS {uid}')
+            result = await cursor.fetchall()
+            await cursor.close()
+            await db.commit()
+            await db.close()
+
+            # if > 1 entry in result return the result to be processed in remindercheck
+            if len(result) > 0:
+                builder_str = ""
+                for reminder in result:
+                    builder_str += f"⦁ \"{reminder[1]}\" at {reminder[2]}\n"
+                return builder_str
+            return "You have no reminders set."
+        except Exception as e:
+            return f"An error occoured when retrieving your data: {e}"
+
+
     async def on_check_messages(self):
         try:
             db = await aiosqlite.connect(self.db_file)
