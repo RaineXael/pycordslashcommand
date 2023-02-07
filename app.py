@@ -37,7 +37,7 @@ logger.addHandler(handler)
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
-reminder = Reminder('./databases/reminder.db')
+reminder = Reminder('./databases/reminder.db',bot)
 
 
 @bot.event
@@ -99,8 +99,9 @@ async def randomanimal(ctx, message:str, year:str, month:str,day:str,hour:str,mi
 
 @rem.command(name="check", description="Check all your active reminders")
 async def randomanimal(ctx):
-    #message = await reminder.decrypt_message(ctx.author.id)
-    await ctx.respond('Under construction!')
+    message = await reminder.on_check_messages(ctx.author.id)
+    #await ctx.respond('Under construction!')
+    await ctx.respond(message)
     
 bot.add_application_command(rem)
 
