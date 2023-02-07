@@ -57,7 +57,8 @@ async def hello(ctx):
 
 @bot.slash_command(name="randomanimal", description="Posts a random specified animal")
 async def randomanimal(ctx, animal=None):
-    message = random_animal.get_random_animal(animal)
+    random_animal.get_available_animals()
+    message = await random_animal.get_random_animal(animal)
     await ctx.respond(message, ephemeral=random_animal.ephemeral)
 
 bot.run(os.getenv("BOT_TOKEN"))
