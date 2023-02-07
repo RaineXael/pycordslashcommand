@@ -17,7 +17,7 @@ class Reminder(commands.Cog):
             self.bot = bot
             self.printer.start()
             
-            self.debug = True #set this to true to remove the negative time restricion
+            self.debug = False #set this to true to remove the negative time restricion
         except:
             print(
                 'There\'s a problem initializing the fernet key. Was reminder_key created?')
