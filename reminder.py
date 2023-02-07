@@ -16,6 +16,8 @@ class Reminder(commands.Cog):
             self.db_file = db_file
             self.bot = bot
             self.printer.start()
+            
+            self.debug = True #set this to true to remove the negative time restricion
         except:
             print(
                 'There\'s a problem initializing the fernet key. Was reminder_key created?')
@@ -46,11 +48,11 @@ class Reminder(commands.Cog):
         try:
             for reminder in result:
                 
-                    message = self.fernet.decrypt(str(reminder[1], 'UTF-8'))
+                    message = self.fernet.decrypt(str(reminder[1], 'UTF-8')).decode('UTF-8')
+                    print(str(message))
                     user = await self.bot.fetch_user(int(reminder[0]))
-                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}: \'{str(message)}\'")
-                    # also erase entry from db
-                    
+                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}:\n\"{str(message)}\"")
+                    # also erase entry from db                    
                     await db.execute(f"DELETE FROM reminders WHERE uid = ? AND message = ? and time = ?", (reminder[0], reminder[1], reminder[2]))
                     await db.commit()                    
         except Exception as e:
@@ -59,7 +61,7 @@ class Reminder(commands.Cog):
             await db.close()        
             
 
-    @tasks.loop(seconds=30.0)
+    @tasks.loop(seconds=15.0)
     async def printer(self):
         message_check = await self.on_check_messages()
         if message_check != None:
@@ -85,7 +87,7 @@ class Reminder(commands.Cog):
         date_format = '%Y-%m-%d-%H-%M'
         # formatting the date using strptime() function
         dateObject = datetime.strptime(date_string, date_format)
-        if dateObject <= datetime.today():
+        if dateObject <= datetime.today() and not self.debug:
             raise IndexError()  # technically out of bounds for time
         return dateObject
 
@@ -95,7 +97,7 @@ class Reminder(commands.Cog):
         try:
             time_obj = self.validate_time(year, month, day, hour, minute)
             await self.insert_reminder('reminders', uid, message, time_obj)
-            return 'Reminder Added'
+            return f'Reminder: \"{message}\" added for {time_obj}'
         except ValueError:
             return "Invalid format! Please check your numbers."
         except IndexError:
