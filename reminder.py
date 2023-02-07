@@ -1,26 +1,16 @@
-from cryptography.fernet import Fernet
 import aiosqlite
 from datetime import datetime
 from discord.ext import tasks, commands
-# the messages here are encrypted so i don't see people's private messages
-# when doing things in the database
 
 
 class Reminder(commands.Cog):
 
     def __init__(self, db_file, bot):
-        try:
-            with open("./reminder_key", "rb") as binary_file:
-                self.key = binary_file.read()
-            self.fernet = Fernet(self.key)
             self.db_file = db_file
             self.bot = bot
             self.printer.start()
             
             self.debug = False #set this to true to remove the negative time restricion
-        except:
-            print(
-                'There\'s a problem initializing the fernet key. Was reminder_key created?')
 
     def cog_unload(self):
         self.printer.cancel()
@@ -47,11 +37,8 @@ class Reminder(commands.Cog):
         db = await aiosqlite.connect(self.db_file)
         try:
             for reminder in result:
-                
-                    message = self.fernet.decrypt(str(reminder[1], 'UTF-8')).decode('UTF-8')
-                    print(str(message))
                     user = await self.bot.fetch_user(int(reminder[0]))
-                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}:\n\"{str(message)}\"")
+                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}:\n\"{reminder[1]}\"")
                     # also erase entry from db                    
                     await db.execute(f"DELETE FROM reminders WHERE uid = ? AND message = ? and time = ?", (reminder[0], reminder[1], reminder[2]))
                     await db.commit()                    
@@ -71,7 +58,7 @@ class Reminder(commands.Cog):
         # returns true or false wether success or fail
         try:
             db = await aiosqlite.connect(self.db_file)
-            await db.execute(f"INSERT INTO {table_name} VALUES(?,?,?)", (uid, self.fernet.encrypt(bytes(message, 'UTF-8')), str(time_obj)))
+            await db.execute(f"INSERT INTO {table_name} VALUES(?,?,?)", (uid, message, str(time_obj)))
             await db.commit()
             await db.close()
             return True
