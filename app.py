@@ -64,7 +64,7 @@ async def songoftheday(ctx):
 
 @bot.slash_command(name="randomanimal", description="Posts a random specified animal")
 async def randomanimal(ctx, animal=None):
-    message = random_animal.get_random_animal(animal)
+    message = await random_animal.get_random_animal(animal)
     await ctx.respond(message, ephemeral=random_animal.ephemeral)
 
 fn = discord.SlashCommandGroup("fortnite", "Fortnite related commands")
