@@ -103,9 +103,9 @@ async def randomanimal(ctx):
     #await ctx.respond('Under construction!')
     await ctx.respond(message, ephemeral=True)
 
-@rem.command(name="toggle24h", description="Toggles the hour entry to 24h time and 12h time")
-async def toggle24h(ctx):
-    await ctx.respond("Under construction!")
+#@rem.command(name="toggle24h", description="Toggles the hour entry to 24h time and 12h time")
+#async def toggle24h(ctx):
+#    await ctx.respond("Under construction!")
 
 bot.add_application_command(rem)
 
