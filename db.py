@@ -20,6 +20,7 @@ class SQL_Manager():
         
     async def insert(self, table_name, value_inputs):
         #returns true or false wether success or fail
+        #!!ONLY SAFE FOR NON-USER INPUTS, USE ? PARAMETERS FOR THAT!!
         try:
             db = await aiosqlite.connect(self.db_file)
             print("input: " + f"INSERT INTO {table_name} VALUES({value_inputs})")

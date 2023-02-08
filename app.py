@@ -4,6 +4,7 @@ from mathops import do_math
 from songoftheday import SongOfTheDay
 from fortniteapi import Fortnite
 from db import SQL_Manager
+from reminder import Reminder
 import discord
 import dotenv
 import os
@@ -36,13 +37,13 @@ logger.addHandler(handler)
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
-fortnite_sql_man = SQL_Manager('./databases/fortnite.db')
+reminder = Reminder('./reminder.db',bot)
 
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
-
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name='the developper fumble with python'))
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):
@@ -88,5 +89,24 @@ async def fn_cosmetic(ctx, user_name: str):
     await ctx.respond(embed=embed)
 
 bot.add_application_command(fn)
+
+rem = discord.SlashCommandGroup("reminder", "Reminder related commands")
+
+@rem.command(name="add", description="Set a reminder for yourself")
+async def randomanimal(ctx, message:str, year:str, month:str,day:str,hour:str,minute:str):
+    val = await reminder.on_add_reminder(ctx.author.id, message,year,month,day,hour,minute)
+    await ctx.respond(val,ephemeral=True)
+
+@rem.command(name="check", description="Check all your active reminders")
+async def randomanimal(ctx):
+    message = await reminder.get_all_reminders(ctx.author.id)
+    #await ctx.respond('Under construction!')
+    await ctx.respond(message, ephemeral=True)
+
+#@rem.command(name="toggle24h", description="Toggles the hour entry to 24h time and 12h time")
+#async def toggle24h(ctx):
+#    await ctx.respond("Under construction!")
+
+bot.add_application_command(rem)
 
 bot.run(os.getenv("BOT_TOKEN"))
