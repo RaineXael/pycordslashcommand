@@ -43,7 +43,7 @@ reminder = Reminder('./reminder.db',bot)
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name='the world burn'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name='the developper fumble with python'))
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):
