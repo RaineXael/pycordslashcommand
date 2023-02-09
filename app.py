@@ -39,6 +39,8 @@ random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
 reminder = Reminder('./reminder.db',bot)
 
+print(os.getenv("FORTNITE_API_TOKEN"))
+print(os.getenv("BOT_TOKEN"))
 
 @bot.event
 async def on_ready():
@@ -68,27 +70,29 @@ async def randomanimal(ctx, animal=None):
     message = await random_animal.get_random_animal(animal)
     await ctx.respond(message, ephemeral=random_animal.ephemeral)
 
-fn = discord.SlashCommandGroup("fortnite", "Fortnite related commands")
+if os.getenv("FORTNITE_API_TOKEN") == None:
+    print("Fortnite API key wasn't found! Skipping the creation of those commands")
+
+    fn = discord.SlashCommandGroup("fortnite", "Fortnite related commands")
+
+    @fn.command(name="map", description="Displays an image of the current map")
+    async def fn_map(ctx):
+        embed = await fortnite.get_map()
+        await ctx.respond(embed=embed)
 
 
-@fn.command(name="map", description="Displays an image of the current map")
-async def fn_map(ctx):
-    embed = await fortnite.get_map()
-    await ctx.respond(embed=embed)
+    @fn.command(name="cosmetic", description="Search info for a cosmetic by name")
+    async def fn_cosmetic(ctx, name: str):
+        embed = await fortnite.get_character(name)
+        await ctx.respond(embed=embed)
 
 
-@fn.command(name="cosmetic", description="Search info for a cosmetic by name")
-async def fn_cosmetic(ctx, name: str):
-    embed = await fortnite.get_character(name)
-    await ctx.respond(embed=embed)
+    @fn.command(name="stats", description="Get your fortnite stats")
+    async def fn_cosmetic(ctx, user_name: str):
+        embed = await fortnite.get_user_data(user_name)
+        await ctx.respond(embed=embed)
 
-
-@fn.command(name="stats", description="Get your fortnite stats")
-async def fn_cosmetic(ctx, user_name: str):
-    embed = await fortnite.get_user_data(user_name)
-    await ctx.respond(embed=embed)
-
-bot.add_application_command(fn)
+    bot.add_application_command(fn)
 
 rem = discord.SlashCommandGroup("reminder", "Reminder related commands")
 
