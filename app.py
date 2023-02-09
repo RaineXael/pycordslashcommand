@@ -70,8 +70,7 @@ async def randomanimal(ctx, animal=None):
     message = await random_animal.get_random_animal(animal)
     await ctx.respond(message, ephemeral=random_animal.ephemeral)
 
-if os.getenv("FORTNITE_API_TOKEN") == None:
-    print("Fortnite API key wasn't found! Skipping the creation of those commands")
+if os.getenv("FORTNITE_API_TOKEN") != None:
 
     fn = discord.SlashCommandGroup("fortnite", "Fortnite related commands")
 
@@ -93,6 +92,8 @@ if os.getenv("FORTNITE_API_TOKEN") == None:
         await ctx.respond(embed=embed)
 
     bot.add_application_command(fn)
+else:
+    print("Fortnite API key wasn't found! Skipping the creation of those commands")
 
 rem = discord.SlashCommandGroup("reminder", "Reminder related commands")
 
