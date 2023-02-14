@@ -2,8 +2,6 @@ import random
 import discord
 from datetime import datetime
 class RandomNumbers:
-    def reroll_seed(self):
-        print("reroll seed based on current time")
 
     def coin_flip(self):
         #make an embed with the result of either 0 or 1 and make it look good
