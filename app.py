@@ -3,7 +3,7 @@ from randomanimal import RandomAnimal
 from mathops import do_math
 from songoftheday import SongOfTheDay
 from fortniteapi import Fortnite
-from db import SQL_Manager
+from randomcommand import RandomNumbers
 from reminder import Reminder
 import discord
 import dotenv
@@ -38,6 +38,7 @@ song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
 reminder = Reminder('./reminder.db',bot)
+randomnum = RandomNumbers()
 
 print(os.getenv("FORTNITE_API_TOKEN"))
 print(os.getenv("BOT_TOKEN"))
@@ -113,5 +114,28 @@ async def randomanimal(ctx):
 #    await ctx.respond("Under construction!")
 
 bot.add_application_command(rem)
+
+rng = discord.SlashCommandGroup("random", 'Roll a random number')
+
+@rng.command(name='coin', description='Flips a coin')
+async def coin_flip(ctx):
+    embed = await randomnum.coin_flip()
+    await ctx.respond(embed=embed)
+
+@rng.command(name='d6', description='Rolls a 6 sided die')
+async def coin_flip(ctx):
+    embed = await randomnum.d6_die()
+    await ctx.respond(embed=embed)
+    
+@rng.command(name='custom', description='Selects a number from 0 to the given number')
+async def coin_flip(ctx, maximum:int):
+    try:
+        embed = await randomnum.choice_chance(maximum)
+        await ctx.respond(embed=embed)
+    except ValueError as e:
+        await ctx.respond("Please enter a number above 0.", ephemeral=True)
+        
+
+bot.add_application_command(rng)
 
 bot.run(os.getenv("BOT_TOKEN"))
