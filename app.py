@@ -5,6 +5,7 @@ from songoftheday import SongOfTheDay
 from fortniteapi import Fortnite
 from randomcommand import RandomNumbers
 from reminder import Reminder
+from motd import Motd
 import discord
 import dotenv
 import os
@@ -38,6 +39,7 @@ song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
 reminder = Reminder('./reminder.db',bot)
+motd = new Motd(bot)
 randomnum = RandomNumbers()
 
 print(os.getenv("FORTNITE_API_TOKEN"))
@@ -46,7 +48,7 @@ print(os.getenv("BOT_TOKEN"))
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name='the developper fumble with python'))
+    
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):
