@@ -1,12 +1,10 @@
-
 import discord
 import aiohttp
 ##-FORTNITE API USED: https://fortnite-api.com/-##
 
 class Fortnite():
     
-    def __init__(self, api_token, logger):
-        self.logger = logger
+    def __init__(self, api_token):
         self.api_token={'Authorization': api_token}
     
     def __rarity_to_color__(self, color_str="common"):

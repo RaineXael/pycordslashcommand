@@ -23,9 +23,9 @@ bot = discord.Bot()
 # import features for the bot
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
-fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
+fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"))
 reminder = Reminder('./reminder.db',bot)
-motd = new Motd(bot)
+presence = Motd(bot)
 randomnum = RandomNumbers()
 
 print(os.getenv("FORTNITE_API_TOKEN"))
@@ -48,10 +48,7 @@ async def mathadd(ctx, num1: float, operation: str, num2: float):
 
 @bot.slash_command(name="songoftheday", description="Posts today's Song Of The Day")
 async def songoftheday(ctx):
-    try:
-        await ctx.respond(song_of_the_day.pick_from_songlist())
-    except Exception as e:
-        logger.error("Song Of The Day picking error: " + str(e))
+        await ctx.respond(song_of_the_day.pick_from_songlist())    
 
 
 @bot.slash_command(name="randomanimal", description="Posts a random specified animal")

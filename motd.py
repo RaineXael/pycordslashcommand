@@ -1,7 +1,8 @@
 from discord.ext import tasks, commands
-from random import random
+from random import randint
+import discord
 
-class Motd(commands.cog):
+class Motd(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -20,8 +21,9 @@ class Motd(commands.cog):
 
     @tasks.loop(hours=3)
     async def change_presence(self):
-        presenceIndex = randint(0,len(self.presences))
-        await bot.change_presence(activity=self.presences[presenceIndex])
+        presenceIndex = randint(0,len(self.presences)-1)
+        print(presenceIndex)
+        await self.bot.change_presence(activity=self.presences[presenceIndex])
             
 # Setting `Playing ` status
 #await bot.change_presence(activity=discord.Game(name="a game"))
