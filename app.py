@@ -9,7 +9,6 @@ from motd import Motd
 import discord
 import dotenv
 import os
-import logging
 import sys
 
 try:
@@ -19,19 +18,6 @@ except:
 
 dotenv.load_dotenv()
 bot = discord.Bot()
-
-
-# init logger
-logger = logging.getLogger('discord')
-if is_debug:
-    logger.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.WARN)
-handler = logging.FileHandler(
-    filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter(
-    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
 
 
 # import features for the bot
