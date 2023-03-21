@@ -1,7 +1,7 @@
 from discord.ext import tasks, commands
 from random import random
 
-class Motd(commands.cog) 
+class Motd(commands.cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -15,13 +15,13 @@ class Motd(commands.cog)
             discord.Streaming(name="to an audience of 0", url="https://www.google.com")
         ]
 
-    def cog_unload(self)
+    def cog_unload(self):
         self.change_presence.cancel()
 
     @tasks.loop(hours=3)
-        async def change_presence(self):
-            presenceIndex = randint(0,len(self.presences))
-            await bot.change_presence(activity=self.presences[presenceIndex])
+    async def change_presence(self):
+        presenceIndex = randint(0,len(self.presences))
+        await bot.change_presence(activity=self.presences[presenceIndex])
             
 # Setting `Playing ` status
 #await bot.change_presence(activity=discord.Game(name="a game"))
