@@ -66,10 +66,10 @@ async def songoftheday(ctx):
         logger.error("Song Of The Day picking error: " + str(e))
 
 
-@bot.slash_command(name="randomanimal", description="Posts a random specified animal")
-async def randomanimal(ctx, animal=None):
-    message = await random_animal.get_random_animal(animal)
-    await ctx.respond(message, ephemeral=random_animal.ephemeral)
+#@bot.slash_command(name="randomanimal", description="Posts a random specified animal")
+#async def randomanimal(ctx, animal=None):
+#    message = await random_animal.get_random_animal(animal)
+#    await ctx.respond(message, ephemeral=random_animal.ephemeral)
 
 if os.getenv("FORTNITE_API_TOKEN") != None:
 
