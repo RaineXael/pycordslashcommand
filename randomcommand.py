@@ -11,13 +11,15 @@ class RandomNumbers:
     async def coin_flip(self):
         # make an embed with the result of either 0 or 1 and make it look good
         result = random.randint(0, 1)
+        url='https://i.imgur.com/KCfYTxz.png'
         if result == 0:
             desc = "Tails"
+            url='https://i.imgur.com/MTLz6G7.png'
         else:
             desc = "Heads"
         embed = discord.Embed(
             title='Coinflip', description=f'The coin landed on {desc}')
-        # todo: put an image for its respective result
+        embed.set_thumbnail(url=url)
         return embed
 
     async def d6_die(self):
