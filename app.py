@@ -5,11 +5,12 @@ from songoftheday import SongOfTheDay
 from fortniteapi import Fortnite
 from randomcommand import RandomNumbers
 from reminder import Reminder
-from motd import Motd
 import discord
+import random
 import dotenv
 import os
 import sys
+import asyncio
 
 try:
     is_debug = sys.argv[1] == "-d"
@@ -17,7 +18,7 @@ except:
     is_debug = False
 
 dotenv.load_dotenv()
-bot = discord.Bot()
+bot = discord.Bot(command_prefix='xl', description='A simple, fun bot.')
 
 
 # import features for the bot
@@ -25,7 +26,6 @@ song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"))
 reminder = Reminder('./reminder.db',bot)
-presence = Motd(bot)
 randomnum = RandomNumbers()
 
 print(os.getenv("FORTNITE_API_TOKEN"))
@@ -34,7 +34,25 @@ print(os.getenv("BOT_TOKEN"))
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
-    
+    print(f"{str(len(bot.guilds))}")
+
+async def ch_pr():
+    await bot.wait_until_ready()
+    statuses = [
+        discord.Activity(type=discord.ActivityType.watching,
+                         name='the dev fumble with python'),
+        discord.Game(name="Bubsy 3D"),
+        discord.Activity(type=discord.ActivityType.listening,
+                         name="to the same song on repeat"),
+        discord.Game(name="with fire"),
+        discord.Game(name=f"on {str(len(bot.guilds))} servers.") 
+    ]
+    while not bot.is_closed():
+        status = random.choice(statuses)
+        await bot.change_presence(activity=status)
+        await asyncio.sleep(10)
+bot.loop.create_task(ch_pr())
+
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):

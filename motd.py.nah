@@ -1,13 +1,14 @@
 from discord.ext import tasks, commands
 from random import randint
 import discord
+#The old motd script.
 
 class Motd(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
         #call change presence at the start if it doesn't already change the presence
-        self.change_presence.start()
+        
 
         self.presences = [
             discord.Activity(type=discord.ActivityType.watching,name='the dev fumble with python'),
@@ -15,6 +16,8 @@ class Motd(commands.Cog):
             discord.Activity(type=discord.ActivityType.listening, name="to the same song on repeat"),
             discord.Streaming(name="to an audience of 0", url="https://www.google.com")
         ]
+        
+        self.change_presence.start()
 
     def cog_unload(self):
         self.change_presence.cancel()
