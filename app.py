@@ -50,7 +50,7 @@ async def ch_pr():
     while not bot.is_closed():
         status = random.choice(statuses)
         await bot.change_presence(activity=status)
-        await asyncio.sleep(10)
+        await asyncio.sleep(480)
 bot.loop.create_task(ch_pr())
 
 
