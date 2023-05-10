@@ -6,10 +6,11 @@ from fortniteapi import Fortnite
 from randomcommand import RandomNumbers
 from reminder import Reminder
 import discord
+import random
 import dotenv
 import os
-import logging
 import sys
+import asyncio
 
 try:
     is_debug = sys.argv[1] == "-d"
@@ -17,26 +18,13 @@ except:
     is_debug = False
 
 dotenv.load_dotenv()
-bot = discord.Bot()
-
-
-# init logger
-logger = logging.getLogger('discord')
-if is_debug:
-    logger.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.WARN)
-handler = logging.FileHandler(
-    filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter(
-    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
+bot = discord.Bot(command_prefix='xl', description='A simple, fun bot.')
 
 
 # import features for the bot
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
-fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
+fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"))
 reminder = Reminder('./reminder.db',bot)
 randomnum = RandomNumbers()
 
@@ -46,7 +34,25 @@ print(os.getenv("BOT_TOKEN"))
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name='the developper fumble with python'))
+    print(f"{str(len(bot.guilds))}")
+
+async def ch_pr():
+    await bot.wait_until_ready()
+    statuses = [
+        discord.Activity(type=discord.ActivityType.watching,
+                         name='the dev fumble with python'),
+        discord.Game(name="Bubsy 3D"),
+        discord.Activity(type=discord.ActivityType.listening,
+                         name="to the same song on repeat"),
+        discord.Game(name="with fire"),
+        discord.Game(name=f"on {str(len(bot.guilds))} servers.") 
+    ]
+    while not bot.is_closed():
+        status = random.choice(statuses)
+        await bot.change_presence(activity=status)
+        await asyncio.sleep(480)
+bot.loop.create_task(ch_pr())
+
 
 @bot.slash_command(name="hello", description="Say hello to the bot")
 async def hello(ctx):
@@ -60,10 +66,7 @@ async def mathadd(ctx, num1: float, operation: str, num2: float):
 
 @bot.slash_command(name="songoftheday", description="Posts today's Song Of The Day")
 async def songoftheday(ctx):
-    try:
-        await ctx.respond(song_of_the_day.pick_from_songlist())
-    except Exception as e:
-        logger.error("Song Of The Day picking error: " + str(e))
+        await ctx.respond(song_of_the_day.pick_from_songlist())    
 
 
 @bot.slash_command(name="randomanimal", description="Posts a random specified animal")
