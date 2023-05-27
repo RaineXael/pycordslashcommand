@@ -1,9 +1,0 @@
-@bot.slash_command(name="dbtest", description="test some random ass stuff for db")
-async def dbdothing(ctx):
-    result = await sql_man.select('table1', '*')
-    await ctx.respond(result)
-    
-@bot.slash_command(name="dbtestinsert", description="test some random ass stuff for db")
-async def dbdothing(ctx, id:str, name:str):
-    result = await sql_man.insert('table1', f'\'{id}\',\'{name}\'')
-    await ctx.respond(f"{result} (check the logs dipshit)")
