@@ -1,15 +1,15 @@
 import aiosqlite
 from datetime import datetime
 from discord.ext import tasks, commands
-
+from cryptography.fernet import Fernet
 
 class Reminder(commands.Cog):
 
-    def __init__(self, db_file, bot):
+    def __init__(self, db_file, key, bot):
             self.db_file = db_file
             self.bot = bot
             self.printer.start()
-            
+            self.fernet = Fernet(bytes(key, 'utf-8'))
             self.debug = False #set this to true to remove the negative time restricion
 
     def cog_unload(self):
@@ -23,7 +23,16 @@ class Reminder(commands.Cog):
             await cursor.close()
             await db.commit()
             await db.close()
-
+            print(type(result))
+            #decrypt
+            for message in result:
+                #message in this case is a tupple which is fucking weird
+                #message[1] = 
+                # print(list(message))
+                # print(type(list(message)))
+                #print(self.fernet.decrypt(message[1]).decode('utf-8'))
+                message[1] = self.fernet.decrypt(message[1]).decode('utf-8')
+            
             # if > 1 entry in result return the result to be processed in remindercheck
             if len(result) > 0:
                 builder_str = ""
@@ -36,6 +45,7 @@ class Reminder(commands.Cog):
 
 
     async def on_check_messages(self):
+        #this is to check what messages are due to send, not the /reminder check command
         try:
             db = await aiosqlite.connect(self.db_file)
             cursor = await db.execute(f'SELECT * FROM \'reminders\' WHERE datetime(time) < datetime(\'{str(datetime.now())}\');')
@@ -58,7 +68,7 @@ class Reminder(commands.Cog):
         try:
             for reminder in result:
                     user = await self.bot.fetch_user(int(reminder[0]))
-                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}:\n\"{reminder[1]}\"")
+                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}:\n\"{self.fernet.decrypt(reminder[1]).decode('utf-8')}\"")
                     # also erase entry from db                    
                     await db.execute(f"DELETE FROM reminders WHERE uid = ? AND message = ? and time = ?", (reminder[0], reminder[1], reminder[2]))
                     await db.commit()                    
@@ -103,9 +113,17 @@ class Reminder(commands.Cog):
         # check inputs then do the below
         try:
             time_obj = self.validate_time(year, month, day, hour, minute)
-            await self.insert_reminder('reminders', uid, message, time_obj)
+            await self.insert_reminder('reminders', uid, self.fernet.encrypt(bytes(message,"utf-8")), time_obj)
             return f'Reminder: \"{message}\" added for {time_obj}'
         except ValueError:
             return "Invalid format! Please check your numbers."
         except IndexError:
             return 'The time you entered was in the past. Please enter a future time and date.'
+
+
+# f = Fernet(key)
+
+# token = f.encrypt(b"Don't look tbh")
+# print(token)
+
+# print(str(f.decrypt(token).decode('utf-8')))

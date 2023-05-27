@@ -37,7 +37,7 @@ logger.addHandler(handler)
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"), logger)
-reminder = Reminder('./reminder.db',bot)
+reminder = Reminder('./reminder.db',os.getenv("REMINDER_KEY"), bot)
 randomnum = RandomNumbers()
 
 print(os.getenv("FORTNITE_API_TOKEN"))
