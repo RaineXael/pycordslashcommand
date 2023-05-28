@@ -1,16 +1,17 @@
 import aiosqlite
 from datetime import datetime
 from discord.ext import tasks, commands
+from cryptography.fernet import Fernet
 
 
 class Reminder(commands.Cog):
 
-    def __init__(self, db_file, bot):
-            self.db_file = db_file
-            self.bot = bot
-            self.printer.start()
-            
-            self.debug = False #set this to true to remove the negative time restricion
+    def __init__(self, db_file, key, bot):
+        self.db_file = db_file
+        self.bot = bot
+        self.printer.start()
+        self.fernet = Fernet(bytes(key, 'utf-8'))
+        self.debug = False  # set this to true to remove the negative time restricion
 
     def cog_unload(self):
         self.printer.cancel()
@@ -28,14 +29,14 @@ class Reminder(commands.Cog):
             if len(result) > 0:
                 builder_str = ""
                 for reminder in result:
-                    builder_str += f"⦁ \"{reminder[1]}\" at {reminder[2]}\n"
+                    builder_str += f"⦁ \"{self.fernet.decrypt(reminder[1]).decode('utf-8')}\" at {reminder[2]}\n"
                 return builder_str
             return "You have no reminders set."
         except Exception as e:
             return f"An error occoured when retrieving your data: {e}"
 
-
     async def on_check_messages(self):
+        # this is to check what messages are due to send, not the /reminder check command
         try:
             db = await aiosqlite.connect(self.db_file)
             cursor = await db.execute(f'SELECT * FROM \'reminders\' WHERE datetime(time) < datetime(\'{str(datetime.now())}\');')
@@ -57,16 +58,16 @@ class Reminder(commands.Cog):
         db = await aiosqlite.connect(self.db_file)
         try:
             for reminder in result:
-                    user = await self.bot.fetch_user(int(reminder[0]))
-                    await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}:\n\"{reminder[1]}\"")
-                    # also erase entry from db                    
-                    await db.execute(f"DELETE FROM reminders WHERE uid = ? AND message = ? and time = ?", (reminder[0], reminder[1], reminder[2]))
-                    await db.commit()                    
+                user = await self.bot.fetch_user(int(reminder[0]))
+                await user.send(f"<@{str(reminder[0])}>, Your reminder due for {reminder[2]}:\n\"{self.fernet.decrypt(reminder[1]).decode('utf-8')}\"")
+                # also erase entry from db
+                await db.execute(f"DELETE FROM reminders WHERE uid = ? AND message = ? and time = ?", (reminder[0], reminder[1], reminder[2]))
+                await db.commit()
         except Exception as e:
-            print(f"Exception occoured during removal of fulfilled request: {e}")
+            print(
+                f"Exception occoured during removal of fulfilled request: {e}")
         finally:
-            await db.close()        
-            
+            await db.close()
 
     @tasks.loop(seconds=15.0)
     async def printer(self):
@@ -103,7 +104,7 @@ class Reminder(commands.Cog):
         # check inputs then do the below
         try:
             time_obj = self.validate_time(year, month, day, hour, minute)
-            await self.insert_reminder('reminders', uid, message, time_obj)
+            await self.insert_reminder('reminders', uid, self.fernet.encrypt(bytes(message, "utf-8")), time_obj)
             return f'Reminder: \"{message}\" added for {time_obj}'
         except ValueError:
             return "Invalid format! Please check your numbers."

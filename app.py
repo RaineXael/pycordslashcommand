@@ -25,7 +25,7 @@ bot = discord.Bot(command_prefix='xl', description='A simple, fun bot.')
 song_of_the_day = SongOfTheDay()
 random_animal = RandomAnimal()
 fortnite = Fortnite(os.getenv("FORTNITE_API_TOKEN"))
-reminder = Reminder('./reminder.db',bot)
+reminder = Reminder('./reminder.db',os.getenv("REMINDER_KEY"), bot)
 randomnum = RandomNumbers()
 
 print(os.getenv("FORTNITE_API_TOKEN"))
