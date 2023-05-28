@@ -24,20 +24,12 @@ class Reminder(commands.Cog):
             await db.commit()
             await db.close()
             print(type(result))
-            #decrypt
-            for message in result:
-                #message in this case is a tupple which is fucking weird
-                #message[1] = 
-                # print(list(message))
-                # print(type(list(message)))
-                #print(self.fernet.decrypt(message[1]).decode('utf-8'))
-                message[1] = self.fernet.decrypt(message[1]).decode('utf-8')
-            
+
             # if > 1 entry in result return the result to be processed in remindercheck
             if len(result) > 0:
                 builder_str = ""
                 for reminder in result:
-                    builder_str += f"⦁ \"{reminder[1]}\" at {reminder[2]}\n"
+                    builder_str += f"⦁ \"{self.fernet.decrypt(reminder[1]).decode('utf-8')}\" at {reminder[2]}\n"
                 return builder_str
             return "You have no reminders set."
         except Exception as e:
