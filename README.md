@@ -1,11 +1,17 @@
 # XaelBot
 A bot with various fun features and API fetching from various services.
 # Features
-* Song of the Day: On request, post a song randomly that only changes per each day. (DONE)
-* Houry Animal API: Get a random animal image on request from [tinyfox.dev](https://tinyfox.dev/)'s API. (DONE)
-* Reminder system: Set custom reminders to remind you after a specified time.
+## Complete
+* Song of the Day: On request, post a song randomly that only changes per each day.
+* Houry Animal API: Get a random animal image on request from [tinyfox.dev](https://tinyfox.dev/)'s API.
 * Fortnite API: Get info about the game's current map, players stats and cosmetics.
-
+* Random Number Generator for dice, coin flips and custom ranges.
+## Partially Complete
+* Reminder system: Set custom reminders to remind you after a specified time.
+## Planned
+* Timezone configurations for time sensitive actions.
+* Trivia game using [optntdb.com's Trivia API](https://opentdb.com/api_config.php)
+* Expansion of the Fortnite API features.
 # Requirements
 * [Python3](https://www.python.org/downloads/)
 * [A Discord Bot](https://discord.com/developers/applications/)
